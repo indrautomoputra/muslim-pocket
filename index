@@ -13,7 +13,7 @@
         html, body { height: 100%; }
         body {
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-            font-size: 16px; /* Base font size */
+            font-size: 15px; /* Mobile-first default font size */
             background: var(--bg-primary);
             color: var(--text-primary);
             transition: background 0.3s ease, color 0.3s ease;
@@ -73,7 +73,8 @@
         }
 
         .header-left, .header-right { display: flex; align-items: center; gap: 0.75rem; /* 12px */ }
-        .header-logo { font-size: 1.25rem; font-weight: 600; letter-spacing: 0.5px; }
+        .header-logo { font-size: 1.125rem; /* 18px - Mobile-first default */ font-weight: 600; letter-spacing: 0.5px; }
+
         .header-btn {
             background: rgba(255,255,255,0.15);
             color: white;
@@ -82,13 +83,13 @@
             border-radius: var(--border-radius-sm);
             cursor: pointer;
             font-size: 0.8125rem; /* 13px */
-            transition: background 0.3s ease; /* Only background transition */
+            transition: background 0.3s ease;
         }
-        .header-btn:hover { background: rgba(255,255,255,0.25); } /* Removed transform */
+        .header-btn:hover { background: rgba(255,255,255,0.25); }
 
-        /* Hamburger Menu Icon */
+        /* Hamburger Menu Icon (Mobile-first default: always shown) */
         .hamburger-menu {
-            display: none;
+            display: block; /* Always shown by default */
             font-size: 1.75rem; /* 28px */
             background: transparent;
             border: none;
@@ -107,19 +108,24 @@
             margin: 0 auto;
             width: 100%;
             overflow: hidden;
+            flex-direction: column; /* Mobile-first: content stacks by default */
         }
 
-        /* Sidebar */
+        /* Sidebar (Mobile-first default: fixed and hidden off-screen) */
         .sidebar {
+            position: fixed; top: 0; left: 0; bottom: 0;
             width: 17.5rem; /* 280px */
-            background: var(--bg-secondary);
-            padding: 1rem 0.875rem; /* 16px 14px */
-            box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.2);
+            z-index: 1001;
+            transform: translateX(-100%); /* Hidden by default */
+            box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.3);
             overflow-y: auto;
             flex-shrink: 0;
             transition: transform 0.3s ease-in-out;
             border-right: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            padding: 1rem 0.875rem; /* 16px 14px */
         }
+        body.menu-open .sidebar { transform: translateX(0); } /* Sidebar slides in when menu is open */
 
         /* Menu */
         .menu {
@@ -169,11 +175,11 @@
         .content {
             flex: 1;
             background: var(--bg-primary);
-            padding: 1.25rem; /* 20px */
+            padding: 0.9375rem; /* 15px - Mobile-first default */
             overflow-y: auto;
         }
         
-        /* Tasbih Section (Main View - MVP) */
+        /* Tasbih Section (Mobile-first defaults) */
         .tasbih-section {
             background: var(--bg-card);
             border-radius: var(--border-radius-lg);
@@ -181,9 +187,9 @@
             text-align: center;
             box-shadow: var(--card-shadow);
             color: var(--text-primary);
-            max-width: 32rem; /* 512px */
-            margin: 0 auto;
-            min-height: calc(100% - 2.5rem); /* Fill available content height, considering 2*1.25rem padding */
+            max-width: none; /* Mobile-first: takes full width */
+            margin: 0; /* Mobile-first: no auto margin for centering */
+            min-height: calc(100% - (0.875rem * 2) - 0.9375rem - 1.5rem); /* Fill available content height on mobile */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -209,9 +215,9 @@
             border-radius: var(--border-radius-sm);
             cursor: pointer;
             font-size: 0.875rem; /* 14px */
-            transition: background 0.2s ease; /* Only background transition */
+            transition: background 0.2s ease;
         }
-        .tasbih-ctrl-btn:hover { background: var(--button-hover); } /* Removed transform */
+        .tasbih-ctrl-btn:hover { background: var(--button-hover); }
         .tasbih-ctrl-btn.active {
             background: var(--accent-color); color: white; border-color: var(--accent-color);
             box-shadow: 0 0.125rem 0.3125rem rgba(0,0,0,0.2);
@@ -243,7 +249,7 @@
         }
 
         .tasbih-counter-display {
-            font-size: 5.5rem; /* 88px */
+            font-size: 4.5rem; /* 72px - Mobile-first default */
             font-weight: 700;
             color: var(--text-primary);
             margin: auto 0;
@@ -256,8 +262,8 @@
 
         .tasbih-main-controls {
             position: relative;
-            width: 13rem; /* 208px */
-            height: 13rem; /* 208px */
+            width: 11rem; /* 176px - Mobile-first default */
+            height: 11rem; /* 176px - Mobile-first default */
             margin: 1.5rem auto; /* 24px */
             border-radius: 50%;
             background: linear-gradient(145deg, var(--bg-secondary), var(--bg-card));
@@ -272,7 +278,7 @@
             background: transparent; border: none; color: var(--text-primary);
             font-size: 2.5rem; /* 40px */
             cursor: pointer;
-            transition: color 0.2s ease; /* Only color transition */
+            transition: color 0.2s ease;
             position: absolute;
             user-select: none;
             -webkit-user-select: none;
@@ -280,12 +286,11 @@
             -ms-user-select: none;
             text-shadow: 0 0.0625rem 0.25rem rgba(0,0,0,0.3);
         }
-        .tasbih-main-controls button:hover { color: var(--accent-light); } /* Removed transform */
-        .tasbih-main-controls button:active { /* Removed transform */ }
+        .tasbih-main-controls button:hover { color: var(--accent-light); }
 
         .tasbih-reset-btn { font-size: 1.25rem; /* 20px */ top: 1.5rem; /* 24px */ left: 50%; transform: translateX(-50%); }
-        .tasbih-increment-btn { font-size: 3.75rem; /* 60px */ top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .tasbih-decrement-btn { font-size: 2.1875rem; /* 35px */ bottom: 1.5rem; /* 24px */ left: 50%; transform: translateX(-50%); }
+        .tasbih-increment-btn { font-size: 3.125rem; /* 50px - Mobile-first default */ top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .tasbih-decrement-btn { font-size: 1.875rem; /* 30px - Mobile-first default */ bottom: 1.5rem; /* 24px */ left: 50%; transform: translateX(-50%); }
 
         .tasbih-footer-text {
             font-size: 0.75rem; /* 12px */
@@ -324,11 +329,11 @@
             line-height: 1;
         }
 
-        /* Doa & Dzikir Section (Replaced Quran) */
+        /* Doa & Dzikir Section (Mobile-first defaults) */
         .doa-dzikir-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-            gap: 0.75rem; /* 12px */
+            grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); /* 120px - Mobile-first default */
+            gap: 0.625rem; /* 10px */
             max-height: 35rem; /* 560px */
             overflow-y: auto;
             padding-right: 0.25rem;
@@ -354,19 +359,12 @@
             color: var(--accent-light);
             margin-bottom: 0.25rem;
         }
-
-        /* FIX: Removed explicit display:none for .doa-dzikir-box.
-           Visibility is now solely controlled by the .hidden class.
-           When .hidden is removed, the div will naturally be display: block. */
-        /* .doa-dzikir-box { display: none; } */
-        /* .doa-dzikir-box.active { display: block; } */
-
-        .verse-header { /* Reused for doa-dzikir display */
+        .verse-header {
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 0.75rem;
             margin-bottom: 1.125rem;
         }
-        .verse-title { /* Reused for doa-dzikir display */
+        .verse-title {
             font-size: 1rem;
             font-weight: 600;
             color: var(--accent-color);
@@ -389,10 +387,10 @@
             padding: 0.75rem;
             background: var(--bg-primary);
             border-radius: var(--border-radius-sm);
-            border-left: 0.25rem solid var(--accent-light); /* Different accent color */
+            border-left: 0.25rem solid var(--accent-light);
             font-style: italic;
         }
-        .verse-trans { /* Reused for doa-dzikir display */
+        .verse-trans {
             font-size: 0.875rem;
             line-height: 1.9;
             color: var(--text-secondary);
@@ -402,11 +400,11 @@
             border-radius: var(--border-radius-sm);
             border-left: 0.25rem solid var(--accent-color);
         }
-        .verse-actions { /* Reused for doa-dzikir display */
+        .verse-actions {
             display: flex; gap: 0.625rem;
             margin-top: 0.9375rem;
         }
-        .verse-btn { /* Reused for doa-dzikir display */
+        .verse-btn {
             flex: 1; padding: 0.625rem 0.875rem;
             background: var(--accent-color); color: white;
             border: none; border-radius: var(--border-radius-sm);
@@ -415,12 +413,12 @@
             transition: background 0.2s ease;
         }
         .verse-btn:hover { background: var(--accent-light); }
-        .verse-btn.back { /* Reused for doa-dzikir display */
+        .verse-btn.back {
             background: var(--button-bg); color: var(--text-primary); border: 1px solid var(--border-color);
         }
         .verse-btn.back:hover { background: var(--button-hover); }
 
-        /* Imsakiyah Section */
+        /* Imsakiyah Section (Mobile-first defaults) */
         .imsakiyah-current-date {
             font-size: 0.9375rem; /* 15px */
             font-weight: 500;
@@ -434,9 +432,9 @@
             border-radius: var(--border-radius-md);
             box-shadow: var(--card-shadow);
         }
-        .imsakiyah-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.8125rem; /* 13px */ color: var(--text-primary); }
+        .imsakiyah-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.75rem; /* 12px - Mobile-first default */ color: var(--text-primary); }
         .imsakiyah-table th {
-            background: var(--accent-color); color: white; padding: 0.625rem 0.75rem; /* 10px 12px */
+            background: var(--accent-color); color: white; padding: 0.5rem 0.625rem; /* 8px 10px - Mobile-first default */
             text-align: left;
             font-weight: 600; position: sticky; top: 0; z-index: 1;
             border-bottom: 1px solid var(--accent-light);
@@ -445,34 +443,32 @@
         .imsakiyah-table thead tr:first-child th:last-child { border-top-right-radius: var(--border-radius-sm); }
 
         .imsakiyah-table td {
-            padding: 0.625rem 0.75rem; /* 10px 12px */
+            padding: 0.5rem 0.625rem; /* 8px 10px - Mobile-first default */
             border-bottom: 1px solid var(--border-color);
             background: var(--bg-card);
-            position: relative; /* For the dot */
+            position: relative;
         }
-        .imsakiyah-table tbody tr:nth-child(even) td { background: var(--bg-secondary); } /* Zebra striping */
+        .imsakiyah-table tbody tr:nth-child(even) td { background: var(--bg-secondary); }
         .imsakiyah-table tbody tr:last-child td { border-bottom: none; }
         .imsakiyah-table tr:hover td { background: var(--button-hover); }
         .imsakiyah-table tr.today td { background: var(--accent-color) !important; color: white; font-weight: 600;}
-        /* New style for current prayer time */
         .imsakiyah-table td.current-prayer-time {
             background: var(--accent-light) !important;
             color: white;
             font-weight: 700;
         }
         .imsakiyah-table td.current-prayer-time::after {
-            content: '•'; /* Or a small icon */
+            content: '•';
             position: absolute;
             right: 0.25rem;
             top: 50%;
             transform: translateY(-50%);
             font-size: 1rem;
             line-height: 1;
-            color: rgba(255,255,255,0.7); /* Lighter dot */
+            color: rgba(255,255,255,0.7);
         }
 
-
-        /* Qibla Section */
+        /* Qibla Section (Mobile-first defaults) */
         .qibla-section {
             background: var(--bg-card);
             border-radius: var(--border-radius-lg);
@@ -480,16 +476,16 @@
             text-align: center;
             box-shadow: var(--card-shadow);
             color: var(--text-primary);
-            max-width: 32rem; /* 512px */
-            margin: 0 auto;
-            min-height: calc(100% - 2.5rem); /* Fill available content height, considering 2*1.25rem padding */
+            max-width: none; /* Mobile-first: takes full width */
+            margin: 0; /* Mobile-first: no auto margin for centering */
+            min-height: calc(100% - (0.875rem * 2) - 0.9375rem - 1.5rem);
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Center content vertically */
-            align-items: center; /* Center content horizontally */
+            justify-content: center;
+            align-items: center;
         }
         .qibla-direction-display {
-            font-size: 4rem; /* 64px */
+            font-size: 3.5rem; /* 56px - Mobile-first default */
             font-weight: 700;
             color: var(--accent-light);
             margin: 1rem 0;
@@ -499,7 +495,7 @@
             gap: 0.75rem;
         }
         .qibla-direction-display .icon {
-            font-size: 3rem; /* 48px */
+            font-size: 2.5rem; /* 40px - Mobile-first default */
         }
         .qibla-info-text {
             font-size: 0.9375rem; /* 15px */
@@ -508,7 +504,7 @@
             line-height: 1.6;
         }
         .qibla-error-message {
-            color: #ef4444; /* Red for error */
+            color: #ef4444;
             font-weight: 500;
             margin-top: 1rem;
         }
@@ -570,48 +566,55 @@
             color: var(--text-secondary);
             font-size: 0.9375rem; /* 15px */
         }
+        
+        /* Overlay for mobile menu */
+        .overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6); z-index: 1000;
+        }
+        body.menu-open .overlay { display: block; }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            body { font-size: 15px; } /* Slightly smaller base font on mobile */
-            .header-left .header-logo { font-size: 1.125rem; /* 18px */ }
-            .hamburger-menu { display: block; }
 
-            .main-wrapper { flex-direction: column; }
+        /* Desktop Overrides (min-width: 769px) */
+        @media (min-width: 769px) {
+            body { font-size: 16px; } /* Larger base font size for desktop */
+            .header-left .header-logo { font-size: 1.25rem; /* 20px */ }
+            .hamburger-menu { display: none; } /* Hide hamburger on desktop */
+
+            .main-wrapper { flex-direction: row; } /* Sidebar and content side-by-side */
             .sidebar {
-                position: fixed; top: 0; left: 0; bottom: 0;
+                position: relative; /* Not fixed, part of document flow */
+                transform: translateX(0) !important; /* Always visible on desktop */
                 width: 17.5rem; /* 280px */
-                z-index: 1001;
-                transform: translateX(-100%);
-                box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.3);
+                box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.2); /* Desktop shadow */
+                flex-shrink: 0; /* Important for flex layout */
+                /* Padding and background already defined in mobile-first default, no need to repeat */
             }
-            body.menu-open .sidebar { transform: translateX(0); }
 
-            .content { padding: 0.9375rem; /* 15px */ }
+            .content { padding: 1.25rem; /* 20px */ }
             
             .tasbih-section {
-                max-width: none; margin: 0;
-                min-height: calc(100vh - (0.875rem * 2) - 0.9375rem - 1.5rem); /* Header height - content padding */
-                padding: 1.25rem; /* 20px */
+                max-width: 32rem; /* 512px - Desktop centering */
+                margin: 0 auto;
+                min-height: calc(100% - 2.5rem); /* Fill available content height */
             }
-            .tasbih-counter-display { font-size: 4.5rem; /* 72px */ }
-            .tasbih-main-controls { width: 11rem; /* 176px */ height: 11rem; /* 176px */ }
-            .tasbih-increment-btn { font-size: 3.125rem; /* 50px */ }
-            .tasbih-decrement-btn { font-size: 1.875rem; /* 30px */ }
+            .tasbih-counter-display { font-size: 5.5rem; /* 88px */ }
+            .tasbih-main-controls { width: 13rem; /* 208px */ height: 13rem; /* 208px */ }
+            .tasbih-increment-btn { font-size: 3.75rem; /* 60px */ }
+            .tasbih-decrement-btn { font-size: 2.1875rem; /* 35px */ }
 
-            .doa-dzikir-grid { grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); /* 120px */ gap: 0.625rem; /* 10px */ }
-            .imsakiyah-table th, .imsakiyah-table td { padding: 0.5rem 0.625rem; /* 8px 10px */ font-size: 0.75rem; /* 12px */ }
+            .doa-dzikir-grid { grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); /* 160px */ }
+            .imsakiyah-table th, .imsakiyah-table td { padding: 0.625rem 0.75rem; /* 10px 12px */ font-size: 0.8125rem; /* 13px */ }
 
-            .qibla-section { min-height: calc(100vh - (0.875rem * 2) - 0.9375rem - 1.5rem); padding: 1.25rem; }
-            .qibla-direction-display { font-size: 3.5rem; }
-            .qibla-direction-display .icon { font-size: 2.5rem; }
-
-            /* Overlay for mobile menu */
-            .overlay {
-                display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(0, 0, 0, 0.6); z-index: 1000;
+            .qibla-section {
+                max-width: 32rem; /* 512px - Desktop centering */
+                margin: 0 auto;
+                min-height: calc(100% - 2.5rem);
             }
-            body.menu-open .overlay { display: block; }
+            .qibla-direction-display { font-size: 4rem; /* 64px */ }
+            .qibla-direction-display .icon { font-size: 3rem; /* 48px */ }
+
+            .overlay { display: none !important; } /* Ensure overlay is hidden on desktop */
         }
     </style>
 </head>
@@ -737,7 +740,7 @@
                 <div class="card">
                     <div class="card-title"><span class="icon">&#x2139;</span> Tentang Aplikasi</div>
                     
-                    <h3>Muslim Pocket - v2.5</h3> <!-- Updated version -->
+                    <h3>Muslim Pocket - v2.6</h3> <!-- Updated version -->
                     <p>
                         Aplikasi ini dibangun menggunakan **Google Apps Script** dan dirancang untuk mempermudah ibadah harian Anda dengan fitur-fitur utama:
                     </p>
@@ -934,37 +937,56 @@
 
         function addCount() {
             if (!isMuted) clickSound.play();
+            
+            const prevCount = tasbihState.count; // Store current count for potential revert
+            tasbihState.count++; // Optimistic UI update
+            updateTasbihUI();
+
             google.script.run
                 .withSuccessHandler(state => {
                     if (state) {
-                        tasbihState = state;
+                        tasbihState = state; // Re-sync with server state
                         updateTasbihUI();
                     } else {
-                        console.error("Backend returned null or invalid state for addTasbihCount.");
+                        console.error("Backend returned null or invalid state for addTasbihCount. Reverting UI.");
+                        tasbihState.count = prevCount; // Revert on invalid state
+                        updateTasbihUI();
                         alert("Gagal memperbarui tasbih (add). Coba lagi.");
                     }
                 })
                 .withFailureHandler(error => {
                     console.error('Error adding tasbih count:', error);
+                    tasbihState.count = prevCount; // Revert on failure
+                    updateTasbihUI();
                     alert('Error menambahkan hitungan tasbih: ' + (error.message || 'Unknown error'));
                 })
                 .addTasbihCount();
         }
 
         function decreaseCount() {
+            if (tasbihState.count <= 0) return; // Prevent negative count
             if (!isMuted) clickSound.play();
+
+            const prevCount = tasbihState.count; // Store current count for potential revert
+            tasbihState.count--; // Optimistic UI update
+            updateTasbihUI();
+
             google.script.run
                 .withSuccessHandler(state => {
                     if (state) {
-                        tasbihState = state;
+                        tasbihState = state; // Re-sync with server state
                         updateTasbihUI();
                     } else {
-                        console.error("Backend returned null or invalid state for decreaseTasbihCount.");
+                        console.error("Backend returned null or invalid state for decreaseTasbihCount. Reverting UI.");
+                        tasbihState.count = prevCount; // Revert on invalid state
+                        updateTasbihUI();
                         alert("Gagal memperbarui tasbih (decrease). Coba lagi.");
                     }
                 })
                 .withFailureHandler(error => {
                     console.error('Error decreasing tasbih count:', error);
+                    tasbihState.count = prevCount; // Revert on failure
+                    updateTasbihUI();
                     alert('Error mengurangi hitungan tasbih: ' + (error.message || 'Unknown error'));
                 })
                 .decreaseTasbihCount();
@@ -994,18 +1016,27 @@
             document.querySelectorAll('.tasbih-ctrl-btn[data-target]').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
             document.getElementById('customTargetInput').value = target; // Sync custom input
+            
+            const prevTarget = tasbihState.target; // Store for revert
+            tasbihState.target = target; // Optimistic UI update
+            updateTasbihUI();
+
             google.script.run
                 .withSuccessHandler(state => {
                     if (state) {
                         tasbihState = state;
                         updateTasbihUI();
                     } else {
-                        console.error("Backend returned null or invalid state for setTasbihTarget (quick).");
+                        console.error("Backend returned null or invalid state for setTasbihTarget (quick). Reverting UI.");
+                        tasbihState.target = prevTarget; // Revert
+                        updateTasbihUI();
                         alert("Gagal mengatur target tasbih. Coba lagi.");
                     }
                 })
                 .withFailureHandler(error => {
                     console.error('Error setting quick target:', error);
+                    tasbihState.target = prevTarget; // Revert on failure
+                    updateTasbihUI();
                     alert('Error mengatur target cepat tasbih: ' + (error.message || 'Unknown error'));
                 })
                 .setTasbihTarget(target);
@@ -1019,18 +1050,27 @@
                 return;
             }
             document.querySelectorAll('.tasbih-ctrl-btn[data-target]').forEach(btn => btn.classList.remove('active')); // Deselect quick target buttons
+            
+            const prevTarget = tasbihState.target; // Store for revert
+            tasbihState.target = numTarget; // Optimistic UI update
+            updateTasbihUI();
+
             google.script.run
                 .withSuccessHandler(state => {
                     if (state) {
                         tasbihState = state;
                         updateTasbihUI();
                     } else {
-                        console.error("Backend returned null or invalid state for setTasbihTarget (custom).");
+                        console.error("Backend returned null or invalid state for setTasbihTarget (custom). Reverting UI.");
+                        tasbihState.target = prevTarget; // Revert
+                        updateTasbihUI();
                         alert("Gagal mengatur target tasbih kustom. Coba lagi.");
                     }
                 })
                 .withFailureHandler(error => {
                     console.error('Error setting custom target:', error);
+                    tasbihState.target = prevTarget; // Revert on failure
+                    updateTasbihUI();
                     alert('Error mengatur target kustom tasbih: ' + (error.message || 'Unknown error'));
                 })
                 .setTasbihTarget(numTarget);
@@ -1048,7 +1088,7 @@
         }
 
         // ============================================
-        // DOA & DZIKIR FUNCTIONS (Replaced Quran Functions)
+        // DOA & DZIKIR FUNCTIONS
         // ============================================
         function loadDoaDzikirList() {
             console.log('Loading Doa & Dzikir list...');
@@ -1073,10 +1113,10 @@
             doaDzikirListDiv.innerHTML = html;
 
             // Ensure list is visible and display area is hidden
-            const listCard = doaDzikirListDiv.parentElement; // This is the .card div containing doaDzikirList
+            const listCard = doaDzikirListDiv.parentElement;
             const displayBox = document.getElementById('doaDzikirDisplay');
-            if (listCard) listCard.classList.remove('hidden'); // Show the list
-            if (displayBox) displayBox.classList.add('hidden'); // Hide the display box
+            if (listCard) listCard.classList.remove('hidden');
+            if (displayBox) displayBox.classList.add('hidden');
             console.log('Doa & Dzikir list loaded and displayed.');
         }
 
@@ -1090,21 +1130,21 @@
             }
 
             const doaDzikirDisplayDiv = document.getElementById('doaDzikirDisplay');
-            const doaDzikirListCard = document.getElementById('doaDzikirList')?.parentElement; // Optional chaining for safety
+            const doaDzikirListCard = document.getElementById('doaDzikirList')?.parentElement;
 
             if (doaDzikirListCard) {
-                doaDzikirListCard.classList.add('hidden'); // Hide the list card
+                doaDzikirListCard.classList.add('hidden');
                 console.log('Hiding Doa & Dzikir list card.');
             } else {
                 console.warn('Warning: doaDzikirList parent element not found when trying to hide.');
             }
             
             if (doaDzikirDisplayDiv) {
-                doaDzikirDisplayDiv.classList.remove('hidden'); // Show the display area (it will be display:block by default)
+                doaDzikirDisplayDiv.classList.remove('hidden');
                 console.log('Showing Doa & Dzikir display area.');
             } else {
                 console.error('Error: doaDzikirDisplay element not found. Cannot show content.');
-                return; // Critical error if the display div itself is missing
+                return;
             }
 
             const contentHtml = `
@@ -1131,14 +1171,14 @@
             const doaDzikirDisplayDiv = document.getElementById('doaDzikirDisplay');
 
             if (doaDzikirListCard) {
-                doaDzikirListCard.classList.remove('hidden'); // Show the list card
+                doaDzikirListCard.classList.remove('hidden');
                 console.log('Showing Doa & Dzikir list card.');
             } else {
                 console.warn('Warning: doaDzikirList parent element not found on back.');
             }
 
             if (doaDzikirDisplayDiv) {
-                doaDzikirDisplayDiv.classList.add('hidden'); // Hide the display area
+                doaDzikirDisplayDiv.classList.add('hidden');
                 console.log('Hiding Doa & Dzikir display area.');
             } else {
                 console.warn('Warning: doaDzikirDisplay element not found on back.');
@@ -1179,7 +1219,7 @@
                 timeZone: 'Asia/Makassar'
             };
             try {
-                return now.toLocaleString('en-US', options); // e.g., "14:30"
+                return now.toLocaleString('en-US', options);
             } catch (e) {
                 console.warn("Error getting Makassar time, falling back to local time. Ensure browser supports 'Asia/Makassar' timezone.", e);
                 // Fallback if 'Asia/Makassar' is not recognized or other issues
@@ -1238,16 +1278,14 @@
             const todayMonth = today.getMonth(); // 0-indexed
             const todayYear = today.getFullYear();
 
-            const currentTimeMakassar = getCurrentTimeMakassar(); // Get current time in Makassar
+            const currentTimeMakassar = getCurrentTimeMakassar();
 
             data.forEach(day => {
-                // Parse date from "DD MMM YYYY" format
-                const dateParts = day.date.split(' '); // e.g., ["01", "Jan", "2024"]
+                const dateParts = day.date.split(' ');
                 const dayOfMonth = parseInt(dateParts[0]);
                 const monthName = dateParts[1];
                 const year = parseInt(dateParts[2]);
 
-                // Create a date object to correctly compare month and year
                 const months = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
                 const dayDate = new Date(year, months[monthName], dayOfMonth);
                 
@@ -1266,7 +1304,7 @@
                         { name: 'asr', time: day.asr },
                         { name: 'maghrib', time: day.maghrib },
                         { name: 'isha', time: day.isha }
-                    ].filter(p => p.time && p.time !== '-'); // Filter out empty/invalid times
+                    ].filter(p => p.time && p.time !== '-');
 
                     let nextPrayerFound = false;
                     for (let i = 0; i < prayerTimesForComparison.length; i++) {
@@ -1276,7 +1314,6 @@
                             break;
                         }
                     }
-                    // If all prayers for today have passed, highlight Isha (the last one)
                     if (!nextPrayerFound && prayerTimesForComparison.length > 0) {
                         currentPrayerClass[prayerTimesForComparison[prayerTimesForComparison.length - 1].name] = 'current-prayer-time';
                     }
@@ -1387,8 +1424,8 @@
 
         function switchView(viewId, element) {
             console.log('Switching view to:', viewId);
-            // Close sidebar if on mobile
-            if (window.innerWidth <= 768) {
+            // Close sidebar if on mobile or if sidebar is open
+            if (document.body.classList.contains('menu-open')) {
                 toggleSidebarMenu();
             }
 
