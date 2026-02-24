@@ -1,0 +1,252 @@
+
+// ============================================
+// MUSLIM POCKET (Tasbih Digital + Quran + Imsakiyah + Qibla)
+// Google Apps Script Backend - Version 2 (Quran Fix & Imsakiyah Highlight)
+// ============================================
+
+const EQURAN_API = 'https://equran.id/api/v2';
+const ALADHAN_API = 'https://api.aladhan.com/v1';
+
+// Makassar, Sulawesi Selatan coordinates (example for latitude and longitude)
+const MAKASSAR_COORDS = { lat: -5.1477, lon: 119.4327 };
+
+// Kaaba (Mecca) coordinates
+const KAABA_COORDS = { lat: 21.4225, lon: 39.8262 };
+
+function doGet() {
+  return HtmlService
+    .createHtmlOutputFromFile('index')
+    .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+    .setTitle('Muslim Pocket'); // Updated application title
+}
+
+// ============================================
+// TASBIH STATE MANAGEMENT
+// ============================================
+
+function getTasbihState() {
+  try {
+    const props = PropertiesService.getUserProperties();
+    const stored = props.getProperty('tasbih_state');
+    let state = stored ? JSON.parse(stored) : null;
+    
+    // Initialize default state
+    let finalState = { count: 0, target: 33 };
+
+    if (state) {
+        // Try to parse count and ensure it's a non-negative number
+        const parsedCount = parseInt(state.count);
+        if (!isNaN(parsedCount) && parsedCount >= 0) {
+            finalState.count = parsedCount;
+        } else {
+            Logger.log(`[getTasbihState] Invalid stored count: ${state.count}. Defaulting to 0.`);
+        }
+
+        // Try to parse target and ensure it's a positive number
+        const parsedTarget = parseInt(state.target);
+        if (!isNaN(parsedTarget) && parsedTarget > 0) {
+            finalState.target = parsedTarget;
+        } else {
+            Logger.log(`[getTasbihState] Invalid stored target: ${state.target}. Defaulting to 33.`);
+        }
+    } else {
+        Logger.log(`[getTasbihState] No stored tasbih state found. Initializing with default values.`);
+    }
+    return finalState;
+  } catch(e) {
+    Logger.log(`[getTasbihState] Error parsing stored state: ${e.message}. Returning default state.`);
+    return { count: 0, target: 33 }; // Default safe state on error
+  }
+}
+
+function saveTasbih(count, target) {
+  try {
+    const props = PropertiesService.getUserProperties();
+    // Validate and sanitize inputs before saving
+    const safeCount = parseInt(count);
+    const safeTarget = parseInt(target);
+
+    // Ensure count is a valid non-negative number, default to 0 if not
+    const finalCount = (!isNaN(safeCount) && safeCount >= 0) ? safeCount : 0;
+
+    // Ensure target is a valid positive number, default to 33 if not
+    const finalTarget = (!isNaN(safeTarget) && safeTarget > 0) ? safeTarget : 33; 
+
+    const state = { count: finalCount, target: finalTarget };
+    props.setProperty('tasbih_state', JSON.stringify(state));
+    return state;
+  } catch(e) {
+    Logger.log(`[saveTasbih] Error saving state: ${e.message}. Returning current state (or default).`);
+    // On save error, return the current state from PropertiesService to prevent UI from showing stale data,
+    // or a default if PropertiesService itself is broken.
+    return getTasbihState(); 
+  }
+}
+
+function addTasbihCount() {
+  const state = getTasbihState(); // Get current validated state
+  if (state.count < state.target) {
+    state.count++;
+  }
+  return saveTasbih(state.count, state.target); // Save and return updated state
+}
+
+function decreaseTasbihCount() {
+  const state = getTasbihState(); // Get current validated state
+  if (state.count > 0) {
+    state.count--;
+  }
+  return saveTasbih(state.count, state.target); // Save and return updated state
+}
+
+function resetTasbihCount() {
+  const state = getTasbihState(); // Get current validated state
+  return saveTasbih(0, state.target); // Reset count to 0, keep current target
+}
+
+function setTasbihTarget(target) {
+  const newTarget = parseInt(target);
+  if (isNaN(newTarget) || newTarget <= 0) {
+    // If an invalid target is provided, we should not change the state.
+    // Return the current state (after validation) without saving anything.
+    Logger.log(`[setTasbihTarget] Invalid target value: ${target}. State not changed.`);
+    return getTasbihState();
+  }
+  // Reset count to 0 when target is changed and save the new valid target
+  return saveTasbih(0, newTarget);
+}
+
+// ============================================
+// QURAN API FUNCTIONS
+// ============================================
+
+function getAllSurahs() {
+  try {
+    const url = EQURAN_API + '/surat';
+    const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true, timeout: 30 });
+    const result = JSON.parse(response.getContentText());
+    if (result.code === 200 && result.data) {
+        return result.data;
+    }
+    // Log API response if not 200 OK or data is missing
+    Logger.log('getAllSurahs: API returned non-200 or no data. Response: ' + response.getContentText());
+    return null; // Signal error/empty data to frontend
+  } catch(e) {
+    Logger.log('getAllSurahs error: ' + e.message);
+    return null; // Signal error to frontend
+  }
+}
+
+function getSurah(surahId) {
+  try {
+    const url = EQURAN_API + '/surat/' + surahId;
+    const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true, timeout: 30 });
+    const result = JSON.parse(response.getContentText());
+    if (result.code === 200 && result.data) {
+        return result.data;
+    }
+    Logger.log('getSurah: API returned non-200 or no data for surahId ' + surahId + '. Response: ' + response.getContentText());
+    return null;
+  } catch(e) {
+    Logger.log('getSurah error for surahId ' + surahId + ': ' + e.message);
+    return null;
+  }
+}
+
+function getRandomVerse() {
+  try {
+    const surahId = Math.floor(Math.random() * 114) + 1; // Random surah ID from 1 to 114
+    const surah = getSurah(surahId); // Call getSurah to fetch data
+    
+    if (!surah || !surah.ayat || surah.ayat.length === 0) {
+      Logger.log('getRandomVerse: Failed to get surah or surah has no verses for ID: ' + surahId);
+      return null;
+    }
+    
+    const verse = surah.ayat[Math.floor(Math.random() * surah.ayat.length)];
+    
+    return {
+      surahId: surah.nomor,
+      surahName: surah.nama,
+      surahLatin: surah.namaLatin,
+      verseNumber: verse.nomorAyat,
+      arabicText: verse.teks,
+      translation: verse.terjemahan || 'Terjemahan tidak tersedia.',
+      audio: verse.audio || null
+    };
+  } catch(e) {
+    Logger.log('getRandomVerse error: ' + e.message);
+    return null;
+  }
+}
+
+// ============================================
+// PRAYER TIME & IMSAKIYAH FUNCTIONS (Sulawesi Selatan - Makassar)
+// ============================================
+
+function getMonthlyPrayerTimes(month, year) {
+  try {
+    const url = `${ALADHAN_API}/calendar?latitude=${MAKASSAR_COORDS.lat}&longitude=${MAKASSAR_COORDS.lon}&method=5&month=${month}&year=${year}`;
+    Logger.log('Fetching prayer times from: ' + url);
+    const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true, timeout: 30 });
+    const result = JSON.parse(response.getContentText());
+    
+    if (result.code === 200 && result.data) {
+      return result.data.map(dayData => {
+        const timings = dayData.timings;
+        // Ensure all necessary fields are present
+        return {
+          date: dayData.date.readable,
+          hijri: dayData.date.hijri.date,
+          fajr: timings.Fajr || '-',
+          sunrise: timings.Sunrise || '-',
+          dhuhr: timings.Dhuhr || '-',
+          asr: timings.Asr || '-',
+          maghrib: timings.Maghrib || '-',
+          isha: timings.Isha || '-',
+          imsak: timings.Imsak || '-'
+        };
+      });
+    }
+    Logger.log('getMonthlyPrayerTimes: API returned non-200 or no data for month ' + month + ', year ' + year + '. Response: ' + response.getContentText());
+    return null;
+  } catch(e) {
+    Logger.log('getMonthlyPrayerTimes error for month ' + month + ', year ' + year + ': ' + e.message);
+    return null;
+  }
+}
+
+// ============================================
+// QIBLA DIRECTION FUNCTION
+// ============================================
+
+function getQiblaDirection(userLat, userLon) {
+  const KAABA_LAT = KAABA_COORDS.lat;
+  const KAABA_LON = KAABA_COORDS.lon;
+
+  // Convert degrees to radians
+  const toRadians = (deg) => deg * Math.PI / 180;
+  const toDegrees = (rad) => rad * 180 / Math.PI;
+
+  const userLatRad = toRadians(userLat);
+  const userLonRad = toRadians(userLon);
+  const kaabaLatRad = toRadians(KAABA_LAT);
+  const kaabaLonRad = toRadians(KAABA_LON);
+
+  const deltaLon = kaabaLonRad - userLonRad;
+
+  const y = Math.sin(deltaLon) * Math.cos(kaabaLatRad);
+  const x = Math.cos(userLatRad) * Math.sin(kaabaLatRad) -
+            Math.sin(userLatRad) * Math.cos(kaabaLatRad) * Math.cos(deltaLon);
+
+  let qiblaBearingRad = Math.atan2(y, x);
+  let qiblaBearingDeg = toDegrees(qiblaBearingRad);
+
+  // Normalize to 0-360 degrees
+  if (qiblaBearingDeg < 0) {
+    qiblaBearingDeg += 360;
+  }
+  
+  Logger.log(`Qibla for Lat: ${userLat}, Lon: ${userLon} is ${qiblaBearingDeg.toFixed(2)} degrees.`);
+  return qiblaBearingDeg.toFixed(2); // Return rounded to 2 decimal places
+}
