@@ -1,0 +1,1427 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muslim Pocket</title>
+    <!-- Google Fonts for a more modern look (Inter) and Arabic script (Noto Naskh Arabic) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Reset & Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            font-size: 16px; /* Base font size */
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        /* Theme Variables (Default: Dark Mode) */
+        :root {
+            --bg-primary: #0f172a; /* Darker blue-grey, modern base */
+            --bg-secondary: #1e293b; /* Slightly lighter for elements */
+            --bg-card: #2f3a4b; /* Card background */
+            --text-primary: #e2e8f0; /* Light text for dark background */
+            --text-secondary: #94a3b8; /* Muted text */
+            --border-color: #3b4b5e; /* Subtle border */
+            --accent-color: #16a34a; /* A calming, deeper green */
+            --accent-light: #22c55e; /* Lighter accent for hover/active */
+            --accent-color-rgb: 22, 163, 74; /* RGB for accent-color */
+            --button-bg: rgba(255, 255, 255, 0.08);
+            --button-hover: rgba(255, 255, 255, 0.15);
+            --header-bg: linear-gradient(135deg, #16a34a, #22c55e); /* Gradient with new accent colors */
+            --shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.4); /* Softer, more pronounced shadow */
+            --card-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.2);
+            --border-radius-sm: 0.25rem;
+            --border-radius-md: 0.5rem;
+            --border-radius-lg: 0.75rem;
+        }
+
+        /* Light Mode */
+        body.light-mode {
+            --bg-primary: #f8fafc; /* Light grey base */
+            --bg-secondary: #ffffff; /* Pure white for elements */
+            --bg-card: #ffffff;
+            --text-primary: #334155; /* Dark text for light background */
+            --text-secondary: #64748b; /* Muted text */
+            --border-color: #e2e8f0;
+            --button-bg: #f1f5f9;
+            --button-hover: #e2e8f0;
+            --header-bg: linear-gradient(135deg, #22c55e, #4ade80);
+            --shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.15);
+            --card-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.08);
+        }
+
+        /* Header */
+        .header {
+            background: var(--header-bg);
+            color: white;
+            padding: 0.875rem 1.25rem; /* 14px 20px */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .header-left, .header-right { display: flex; align-items: center; gap: 0.75rem; /* 12px */ }
+        .header-logo { font-size: 1.25rem; font-weight: 600; letter-spacing: 0.5px; }
+        .header-btn {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: none;
+            padding: 0.5rem 0.75rem; /* 8px 12px */
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: 0.8125rem; /* 13px */
+            transition: background 0.3s ease; /* Only background transition */
+        }
+        .header-btn:hover { background: rgba(255,255,255,0.25); } /* Removed transform */
+
+        /* Hamburger Menu Icon */
+        .hamburger-menu {
+            display: none;
+            font-size: 1.75rem; /* 28px */
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0 0.5rem;
+            transition: transform 0.2s ease;
+        }
+        .hamburger-menu:hover { transform: scale(1.1); }
+
+        /* Main Content Area */
+        .main-wrapper {
+            display: flex;
+            flex: 1;
+            max-width: 90rem; /* 1440px */
+            margin: 0 auto;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 17.5rem; /* 280px */
+            background: var(--bg-secondary);
+            padding: 1rem 0.875rem; /* 16px 14px */
+            box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.2);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease-in-out;
+            border-right: 1px solid var(--border-color);
+        }
+
+        /* Menu */
+        .menu {
+            margin-bottom: 1.25rem; /* 20px */
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            background: var(--bg-card);
+            box-shadow: var(--card-shadow);
+        }
+        .menu-title {
+            padding: 0.75rem 1rem; /* 12px 16px */
+            font-weight: 600;
+            font-size: 0.875rem; /* 14px */
+            color: var(--accent-light);
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+        .menu-item {
+            padding: 0.75rem 1rem; /* 12px 16px */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* 12px */
+            font-size: 0.875rem; /* 14px */
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s ease, color 0.2s ease;
+            color: var(--text-primary);
+        }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:hover { background: var(--button-hover); }
+        .menu-item.active {
+            background: linear-gradient(90deg, rgba(var(--accent-color-rgb), 0.1), transparent);
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+        .menu-item-icon {
+            font-size: 1.125rem; /* 18px */
+            width: 1.5rem; /* Fixed width for icon alignment */
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .menu-item.active .menu-item-icon {
+            color: var(--accent-color);
+        }
+
+        /* Content Area (for all views, including tasbih) */
+        .content {
+            flex: 1;
+            background: var(--bg-primary);
+            padding: 1.25rem; /* 20px */
+            overflow-y: auto;
+        }
+        
+        /* Tasbih Section (Main View - MVP) */
+        .tasbih-section {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem; /* 24px */
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            color: var(--text-primary);
+            max-width: 32rem; /* 512px */
+            margin: 0 auto;
+            min-height: calc(100% - 2.5rem); /* Fill available content height, considering 2*1.25rem padding */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .tasbih-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.25rem; /* 20px */
+            color: var(--text-secondary);
+            font-size: 0.875rem; /* 14px */
+        }
+
+        .tasbih-controls {
+            display: flex; gap: 0.625rem; /* 10px */
+            margin-bottom: 1.5rem; /* 24px */
+            justify-content: center;
+        }
+
+        .tasbih-ctrl-btn {
+            background: var(--button-bg); color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 0.625rem 0.875rem; /* 10px 14px */
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: 0.875rem; /* 14px */
+            transition: background 0.2s ease; /* Only background transition */
+        }
+        .tasbih-ctrl-btn:hover { background: var(--button-hover); } /* Removed transform */
+        .tasbih-ctrl-btn.active {
+            background: var(--accent-color); color: white; border-color: var(--accent-color);
+            box-shadow: 0 0.125rem 0.3125rem rgba(0,0,0,0.2);
+        }
+
+        .tasbih-custom-target {
+            width: 4.5rem; /* 72px */
+            padding: 0.625rem 0.75rem; /* 10px 12px */
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.875rem; /* 14px */
+            text-align: center;
+            appearance: none;
+            -moz-appearance: textfield; /* Remove number input arrows on Firefox */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        /* Remove number input arrows on Chrome, Safari, Edge */
+        .tasbih-custom-target::-webkit-outer-spin-button,
+        .tasbih-custom-target::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .tasbih-custom-target:focus {
+            outline: none;
+            border-color: var(--accent-light);
+            box-shadow: 0 0 0 0.1875rem rgba(var(--accent-color-rgb), 0.3); /* 3px focus glow */
+        }
+
+        .tasbih-counter-display {
+            font-size: 5.5rem; /* 88px */
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: auto 0;
+            font-family: 'Inter', Arial, monospace;
+            text-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.5);
+            user-select: none; /* Prevent selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+        }
+
+        .tasbih-main-controls {
+            position: relative;
+            width: 13rem; /* 208px */
+            height: 13rem; /* 208px */
+            margin: 1.5rem auto; /* 24px */
+            border-radius: 50%;
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-card));
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        .tasbih-main-controls button {
+            background: transparent; border: none; color: var(--text-primary);
+            font-size: 2.5rem; /* 40px */
+            cursor: pointer;
+            transition: color 0.2s ease; /* Only color transition */
+            position: absolute;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            text-shadow: 0 0.0625rem 0.25rem rgba(0,0,0,0.3);
+        }
+        .tasbih-main-controls button:hover { color: var(--accent-light); } /* Removed transform */
+        .tasbih-main-controls button:active { /* Removed transform */ }
+
+        .tasbih-reset-btn { font-size: 1.25rem; /* 20px */ top: 1.5rem; /* 24px */ left: 50%; transform: translateX(-50%); }
+        .tasbih-increment-btn { font-size: 3.75rem; /* 60px */ top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .tasbih-decrement-btn { font-size: 2.1875rem; /* 35px */ bottom: 1.5rem; /* 24px */ left: 50%; transform: translateX(-50%); }
+
+        .tasbih-footer-text {
+            font-size: 0.75rem; /* 12px */
+            color: var(--text-secondary);
+            margin-top: 1.5rem; /* 24px */
+            line-height: 1.5;
+        }
+        .tasbih-footer-copyright {
+            margin-top: 0.625rem; /* 10px */
+            font-size: 0.6875rem; /* 11px */
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+
+        /* Card styles for various views */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            padding: 1.25rem; /* 20px */
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.25rem; /* 20px */
+            color: var(--text-primary);
+        }
+        .card-title {
+            font-size: 1rem; /* 16px */
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 0.875rem; /* 14px */
+            display: flex;
+            align-items: center;
+            gap: 0.625rem; /* 10px */
+        }
+        .card-title .icon {
+            font-size: 1.25rem; /* 20px */
+            line-height: 1;
+        }
+
+        /* Doa & Dzikir Section (Replaced Quran) */
+        .doa-dzikir-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+            gap: 0.75rem; /* 12px */
+            max-height: 35rem; /* 560px */
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+        .doa-dzikir-item {
+            padding: 0.75rem; /* 12px */
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-secondary);
+            box-shadow: 0 0.0625rem 0.1875rem rgba(0,0,0,0.1);
+        }
+        .doa-dzikir-item:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0.25rem 0.75rem rgba(var(--accent-color-rgb), 0.2);
+            transform: translateY(-2px) scale(1.01);
+        }
+        .doa-dzikir-item .item-title {
+            font-size: 0.9375rem; /* 15px */
+            font-weight: 600;
+            color: var(--accent-light);
+            margin-bottom: 0.25rem;
+        }
+
+        /* FIX: Removed explicit display:none for .doa-dzikir-box.
+           Visibility is now solely controlled by the .hidden class.
+           When .hidden is removed, the div will naturally be display: block. */
+        /* .doa-dzikir-box { display: none; } */
+        /* .doa-dzikir-box.active { display: block; } */
+
+        .verse-header { /* Reused for doa-dzikir display */
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.125rem;
+        }
+        .verse-title { /* Reused for doa-dzikir display */
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 0.375rem;
+        }
+        .verse-arabic {
+            font-size: 1.5rem; /* 24px */
+            line-height: 2.2;
+            direction: rtl; text-align: right;
+            color: var(--accent-light);
+            margin: 1.25rem 0;
+            font-family: 'Noto Naskh Arabic', 'Traditional Arabic', Arial, sans-serif;
+            font-weight: 600;
+        }
+        .verse-latin {
+            font-size: 0.875rem; /* 14px */
+            line-height: 1.9;
+            color: var(--text-secondary);
+            margin: 0.9375rem 0;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-sm);
+            border-left: 0.25rem solid var(--accent-light); /* Different accent color */
+            font-style: italic;
+        }
+        .verse-trans { /* Reused for doa-dzikir display */
+            font-size: 0.875rem;
+            line-height: 1.9;
+            color: var(--text-secondary);
+            margin: 0.9375rem 0;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-sm);
+            border-left: 0.25rem solid var(--accent-color);
+        }
+        .verse-actions { /* Reused for doa-dzikir display */
+            display: flex; gap: 0.625rem;
+            margin-top: 0.9375rem;
+        }
+        .verse-btn { /* Reused for doa-dzikir display */
+            flex: 1; padding: 0.625rem 0.875rem;
+            background: var(--accent-color); color: white;
+            border: none; border-radius: var(--border-radius-sm);
+            cursor: pointer; font-weight: 500;
+            font-size: 0.8125rem;
+            transition: background 0.2s ease;
+        }
+        .verse-btn:hover { background: var(--accent-light); }
+        .verse-btn.back { /* Reused for doa-dzikir display */
+            background: var(--button-bg); color: var(--text-primary); border: 1px solid var(--border-color);
+        }
+        .verse-btn.back:hover { background: var(--button-hover); }
+
+        /* Imsakiyah Section */
+        .imsakiyah-current-date {
+            font-size: 0.9375rem; /* 15px */
+            font-weight: 500;
+            margin-bottom: 0.75rem; /* 12px */
+            color: var(--text-primary);
+        }
+        .imsakiyah-table-container {
+            max-height: 40rem; /* 640px */
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--card-shadow);
+        }
+        .imsakiyah-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.8125rem; /* 13px */ color: var(--text-primary); }
+        .imsakiyah-table th {
+            background: var(--accent-color); color: white; padding: 0.625rem 0.75rem; /* 10px 12px */
+            text-align: left;
+            font-weight: 600; position: sticky; top: 0; z-index: 1;
+            border-bottom: 1px solid var(--accent-light);
+        }
+        .imsakiyah-table thead tr:first-child th:first-child { border-top-left-radius: var(--border-radius-sm); }
+        .imsakiyah-table thead tr:first-child th:last-child { border-top-right-radius: var(--border-radius-sm); }
+
+        .imsakiyah-table td {
+            padding: 0.625rem 0.75rem; /* 10px 12px */
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-card);
+            position: relative; /* For the dot */
+        }
+        .imsakiyah-table tbody tr:nth-child(even) td { background: var(--bg-secondary); } /* Zebra striping */
+        .imsakiyah-table tbody tr:last-child td { border-bottom: none; }
+        .imsakiyah-table tr:hover td { background: var(--button-hover); }
+        .imsakiyah-table tr.today td { background: var(--accent-color) !important; color: white; font-weight: 600;}
+        /* New style for current prayer time */
+        .imsakiyah-table td.current-prayer-time {
+            background: var(--accent-light) !important;
+            color: white;
+            font-weight: 700;
+        }
+        .imsakiyah-table td.current-prayer-time::after {
+            content: '•'; /* Or a small icon */
+            position: absolute;
+            right: 0.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            line-height: 1;
+            color: rgba(255,255,255,0.7); /* Lighter dot */
+        }
+
+
+        /* Qibla Section */
+        .qibla-section {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem; /* 24px */
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            color: var(--text-primary);
+            max-width: 32rem; /* 512px */
+            margin: 0 auto;
+            min-height: calc(100% - 2.5rem); /* Fill available content height, considering 2*1.25rem padding */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+            align-items: center; /* Center content horizontally */
+        }
+        .qibla-direction-display {
+            font-size: 4rem; /* 64px */
+            font-weight: 700;
+            color: var(--accent-light);
+            margin: 1rem 0;
+            text-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .qibla-direction-display .icon {
+            font-size: 3rem; /* 48px */
+        }
+        .qibla-info-text {
+            font-size: 0.9375rem; /* 15px */
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .qibla-error-message {
+            color: #ef4444; /* Red for error */
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+        .qibla-reload-btn {
+            background: var(--accent-color); color: white;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            transition: background 0.2s ease;
+        }
+        .qibla-reload-btn:hover { background: var(--accent-light); }
+
+        /* About Section Specific Styling */
+        #view-about p {
+            margin-bottom: 0.75rem; /* 12px */
+            font-size: 0.9375rem; /* 15px */
+            color: var(--text-secondary);
+        }
+        #view-about h3 {
+            font-size: 1.125rem; /* 18px */
+            color: var(--accent-color);
+            margin-top: 1rem; /* 16px */
+            margin-bottom: 0.5rem; /* 8px */
+            font-weight: 600;
+        }
+        #view-about ul {
+            list-style-type: disc;
+            margin-left: 1.25rem; /* 20px */
+            margin-bottom: 1rem; /* 16px */
+        }
+        #view-about li {
+            font-size: 0.9375rem; /* 15px */
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem; /* 4px */
+        }
+        #view-about a {
+            color: var(--accent-light);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        #view-about a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+        #view-about .about-copyright {
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        /* Utilities */
+        .hidden { display: none !important; }
+        .loading {
+            text-align: center; padding: 2.5rem 1.25rem; /* 40px 20px */
+            color: var(--text-secondary);
+            font-size: 0.9375rem; /* 15px */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body { font-size: 15px; } /* Slightly smaller base font on mobile */
+            .header-left .header-logo { font-size: 1.125rem; /* 18px */ }
+            .hamburger-menu { display: block; }
+
+            .main-wrapper { flex-direction: column; }
+            .sidebar {
+                position: fixed; top: 0; left: 0; bottom: 0;
+                width: 17.5rem; /* 280px */
+                z-index: 1001;
+                transform: translateX(-100%);
+                box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.3);
+            }
+            body.menu-open .sidebar { transform: translateX(0); }
+
+            .content { padding: 0.9375rem; /* 15px */ }
+            
+            .tasbih-section {
+                max-width: none; margin: 0;
+                min-height: calc(100vh - (0.875rem * 2) - 0.9375rem - 1.5rem); /* Header height - content padding */
+                padding: 1.25rem; /* 20px */
+            }
+            .tasbih-counter-display { font-size: 4.5rem; /* 72px */ }
+            .tasbih-main-controls { width: 11rem; /* 176px */ height: 11rem; /* 176px */ }
+            .tasbih-increment-btn { font-size: 3.125rem; /* 50px */ }
+            .tasbih-decrement-btn { font-size: 1.875rem; /* 30px */ }
+
+            .doa-dzikir-grid { grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); /* 120px */ gap: 0.625rem; /* 10px */ }
+            .imsakiyah-table th, .imsakiyah-table td { padding: 0.5rem 0.625rem; /* 8px 10px */ font-size: 0.75rem; /* 12px */ }
+
+            .qibla-section { min-height: calc(100vh - (0.875rem * 2) - 0.9375rem - 1.5rem); padding: 1.25rem; }
+            .qibla-direction-display { font-size: 3.5rem; }
+            .qibla-direction-display .icon { font-size: 2.5rem; }
+
+            /* Overlay for mobile menu */
+            .overlay {
+                display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0, 0, 0, 0.6); z-index: 1000;
+            }
+            body.menu-open .overlay { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebarMenu()">&#9776;</button> <!-- Unicode Hamburger -->
+            <div class="header-logo">Muslim Pocket</div>
+        </div>
+        <div class="header-right">
+            <button class="header-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙</button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+        <!-- Overlay for mobile menu -->
+        <div class="overlay" onclick="toggleSidebarMenu()"></div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Menu -->
+            <div class="menu">
+                <div class="menu-title">MENU</div>
+                <div class="menu-item active" onclick="switchView('tasbih', this)">
+                    <span class="menu-item-icon">📿</span> Tasbih
+                </div>
+                <div class="menu-item" onclick="switchView('doa-dzikir', this)">
+                    <span class="menu-item-icon">&#x1F4DA;</span> Doa & Dzikir
+                </div>
+                <div class="menu-item" onclick="switchView('imsakiyah', this)">
+                    <span class="menu-item-icon">&#x23F0;</span> Jadwal Imsakiyah
+                </div>
+                <div class="menu-item" onclick="switchView('qibla', this)">
+                    <span class="menu-item-icon">&#x2197;</span> Arah Kiblat
+                </div>
+                <div class="menu-item" onclick="switchView('about', this)">
+                    <span class="menu-item-icon">&#x2139;</span> Tentang
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area - This will host the active view -->
+        <div class="content">
+            <!-- Tasbih View (MVP - Default and Main) -->
+            <div id="view-tasbih" class="view active">
+                <div class="tasbih-section">
+                    <div> <!-- Wrapper for top content -->
+                        <div class="tasbih-header">
+                            <button class="tasbih-ctrl-btn" onclick="toggleMute()" id="muteButton">🔇</button>
+                            <span>Target: <span id="tasbihTargetDisplay">33</span></span>
+                        </div>
+                        <div class="tasbih-controls">
+                            <button class="tasbih-ctrl-btn" data-target="11" onclick="setQuickTarget(11, this)">11</button>
+                            <button class="tasbih-ctrl-btn active" data-target="33" onclick="setQuickTarget(33, this)">33</button>
+                            <button class="tasbih-ctrl-btn" data-target="99" onclick="setQuickTarget(99, this)">99</button>
+                            <input type="number" class="tasbih-custom-target" id="customTargetInput" value="33" onchange="setCustomTarget(this.value)">
+                        </div>
+                    </div>
+
+                    <div class="tasbih-counter-display" id="counter">0</div>
+
+                    <div> <!-- Wrapper for bottom content -->
+                        <div class="tasbih-main-controls">
+                            <button class="tasbih-reset-btn" onclick="resetCount()">&#x21BA;</button> <!-- Unicode Reset -->
+                            <button class="tasbih-increment-btn" onclick="addCount()">+</button>
+                            <button class="tasbih-decrement-btn" onclick="decreaseCount()">-</button>
+                        </div>
+
+                        <p class="tasbih-footer-text">
+                            Tasbih digital online ini mempermudah Anda menghitung Dzikir.
+                            Akses langsung dari peramban, tanpa iklan, tanpa analitik, privasi aman dan gratis sepenuhnya.
+                        </p>
+                        <p class="tasbih-footer-copyright">
+                            Copyright &copy; 2026 indrautomoputra
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doa & Dzikir View (Replaced Quran View) -->
+            <div id="view-doa-dzikir" class="view hidden">
+                <div class="card">
+                    <div class="card-title"><span class="icon">&#x1F4DA;</span> Kumpulan Doa & Dzikir Pilihan</div>
+                    <div id="doaDzikirList" class="doa-dzikir-grid">
+                        <div class="loading">Memuat daftar doa dan dzikir...</div>
+                    </div>
+                </div>
+
+                <div id="doaDzikirDisplay" class="doa-dzikir-box hidden">
+                    <!-- Doa/Dzikir content will be loaded here dynamically -->
+                </div>
+            </div>
+
+            <!-- Imsakiyah View -->
+            <div id="view-imsakiyah" class="view hidden">
+                <div class="card">
+                    <div class="card-title"><span class="icon">&#x23F0;</span> Jadwal Imsakiyah & Salat (Makassar)</div>
+                    <p class="imsakiyah-current-date" id="imsakiyahCurrentMonth"></p>
+                    <div class="imsakiyah-table-container">
+                        <div id="imsakiyahData" class="loading">Memuat jadwal imsakiyah...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Qibla View -->
+            <div id="view-qibla" class="view hidden">
+                <div class="qibla-section">
+                    <div class="card-title"><span class="icon">&#x2197;</span> Arah Kiblat</div>
+                    <p class="qibla-info-text">
+                        Aplikasi ini akan menghitung arah Kiblat (Ka'bah di Mekah) berdasarkan lokasi Anda saat ini.
+                        Arah yang ditampilkan adalah **derajat dari Utara Sejati**.
+                        Untuk menemukan arah secara fisik, gunakan kompas dan sesuaikan dengan sudut yang ditampilkan.
+                    </p>
+                    <div id="qiblaResult" class="loading">Memuat lokasi dan menghitung arah Kiblat...</div>
+                    <button class="qibla-reload-btn" onclick="loadQiblaDirection()">Muat Ulang Arah Kiblat</button>
+                </div>
+            </div>
+
+            <!-- About View -->
+            <div id="view-about" class="view hidden">
+                <div class="card">
+                    <div class="card-title"><span class="icon">&#x2139;</span> Tentang Aplikasi</div>
+                    
+                    <h3>Muslim Pocket - v2.5</h3> <!-- Updated version -->
+                    <p>
+                        Aplikasi ini dibangun menggunakan **Google Apps Script** dan dirancang untuk mempermudah ibadah harian Anda dengan fitur-fitur utama:
+                    </p>
+                    <ul>
+                        <li><strong>Tasbih Digital</strong>: Hitung dzikir dengan mudah, atur target hitungan, dan fitur mute untuk pengalaman yang lebih tenang.</li>
+                        <li><strong>Doa & Dzikir Pilihan</strong>: Kumpulan doa dan dzikir seperti Ayat 1000 Dinar, Ayat Kursi, Al-Kahfi (akhir), Doa Makan, Doa Tidur, Dzikir Pagi, dan **doa-doa penting dari para Nabi dan Rasul**, lengkap dengan teks Arab, Latin, dan terjemahan.</li>
+                        <li><strong>Jadwal Imsakiyah & Salat</strong>: Dapatkan jadwal salat dan imsakiyah yang akurat untuk wilayah Makassar, Sulawesi Selatan.</li>
+                        <li><strong>Arah Kiblat</strong>: Temukan arah Kiblat (derajat dari Utara Sejati) dari lokasi Anda saat ini.</li>
+                    </ul>
+
+                    <h3>Sumber Data</h3>
+                    <p>
+                        Aplikasi ini memanfaatkan API publik untuk menyediakan data yang relevan:
+                    </p>
+                    <ul>
+                        <li>API Jadwal Salat: <a href="https://aladhan.com/prayer-times-api" target="_blank">aladhan.com</a></li>
+                    </ul>
+
+                    <h3>Fitur Lainnya</h3>
+                    <ul>
+                        <li>**Mode Gelap / Terang**: Sesuaikan tampilan aplikasi sesuai preferensi Anda.</li>
+                        <li>**Desain Responsif**: Aplikasi dapat diakses dengan nyaman di berbagai ukuran layar, dari ponsel hingga desktop.</li>
+                    </ul>
+                    
+                    <p>
+                        Dibuat dengan semangat untuk memudahkan ibadah Anda.
+                    </p>
+                    <p class="about-copyright">
+                        Copyright &copy; 2026 indrautomoputra
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // GLOBAL STATE & CONFIGURATIONS
+        // ============================================
+        let tasbihState = { count: 0, target: 33 };
+        let isLightMode = false; // Default to dark mode
+        let isMuted = false;
+        const clickSound = new Audio('https://cdn.jsdelivr.net/gh/swrobel/soundboard/snd/click.mp3'); // Simple click sound
+
+        // Static Doa & Dzikir Data
+        const doaDzikirData = [
+            {
+                id: 'ayat1000dinar',
+                title: 'Ayat 1000 Dinar',
+                arabic: 'وَمَن يَتَّقِ ٱللَّهَ يَجْعَل لَّهُۥ مَخْرَجًۭا وَيَرْزُقْهُ مِنۡ حَيۡثُ لَا يَحۡتَسِبُ‌ۚ وَمَن يَتَوَكَّلۡ عَلَى ٱللَّهِ فَهُوَ حَسۡبُهُۥۤ‌ۚ إِنَّ ٱللَّهَ بَٰلِغُ أَمۡرِهِۦ‌ۚ قَدۡ جَعَلَ ٱللَّهُ لِكُلِّ شَىۡءٖ قَدۡرًۭا',
+                latin: 'Wa may yattaqillāha yaj\'al lahụ makhrajāw, wa yarzuq-hu min ḥaiṡu lā yaḥtasib, wa may yatawakkal \'alallāhi fa huwa ḥasbuh, innallāha bāligu amrih, qad ja\'alallāhu likulli syai\'ing qadrā',
+                indonesian: '"...Barang siapa bertakwa kepada Allah niscaya Dia akan mengadakan baginya jalan keluar. Dan memberinya rezeki dari arah yang tiada disangka-sangkanya. Dan barang siapa yang bertawakal kepada Allah niscaya Allah akan mencukupkan (keperluan)nya. Sesungguhnya Allah melaksanakan urusan (yang dikehendaki-Nya). Sesungguhnya Allah telah mengadakan ketentuan bagi tiap-tiap sesuatu." (QS. At-Talaq: 2-3)'
+            },
+            {
+                id: 'ayatkursi',
+                title: 'Ayat Kursi',
+                arabic: 'ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ',
+                latin: 'Allāhu lā ilāha illā huwal-ḥayyul-qayyụm, lā ta`khużuhụ sinatuw wa lā na`um, lahụ mā fis-samāwāti wa mā fil-arḍ, man żallażī yasyfa\'u \'indahū illā bi`iżnih, ya\'lamu mā baina aidīhim wa mā khalfahum, wa lā yuḥīṭụna bisyai`im min \'ilmihī illā bimā syā`, wasi\'a kursiyyuhus-samāwāti wal-arḍ, wa lā ya`ụduhụ ḥifẓuhumā, wa huwal-\'aliyyul-\'aẓīm',
+                indonesian: 'Allah, tidak ada Tuhan (yang berhak disembah) melainkan Dia Yang Hidup kekal lagi terus menerus mengurus (makhluk-Nya); tidak mengantuk dan tidak tidur. Kepunyaan-Nya apa yang di langit dan di bumi. Tiada yang dapat memberi syafa\'at di sisi Allah tanpa izin-Nya? Allah mengetahui apa-apa yang di hadapan mereka dan di belakang mereka, dan mereka tidak mengetahui apa-apa dari ilmu Allah melainkan apa yang dikehendaki-Nya. Kursi Allah meliputi langit dan bumi. Dan Allah tidak merasa berat memelihara keduanya, dan Allah Maha Tinggi lagi Maha Besar. (QS. Al-Baqarah: 255)'
+            },
+            {
+                id: 'alkahfiakhir',
+                title: 'Akhir Surah Al-Kahfi (18:109-110)',
+                arabic: 'قُل لَّوۡ كَانَ ٱلۡبَحۡرُ مِدَادًۭا لِّكَلِمَٰتِ رَبِّى لَنَفِدَ ٱلۡبَحۡرُ قَبۡلَ أَن تَنفَدَ كَلِمَٰتُ رَبِّى وَلَوۡ جِئۡنَا بِمِثۡلِهِۦ مَدَدًۭا\n\nقُلۡ إِنَّمَآ أَنَا۠ بَشَرٌۭ مِّثۡلُكُمۡ يُوحَىٰٓ إِلَىَّ أَنَّمَآ إِلَٰهُكُمۡ إِلَٰهٌۭ وَٰحِدٌۭ ۖ فَمَن كَانَ يَرۡجُواْ لِقَآءَ رَبِّهِۦ فَلۡيَعۡمَلۡ عَمَلًۭا صَٰلِحًۭا وَلَا يُشۡرِكۡ بِعِبَادَةِ رَبِّهِۦٓ أَحَدًۢا',
+                latin: 'Qul lau kānal-baḥru midādal likalimāti rabbī lanafidal-baḥru qabla an tanfada kalimātu rabbī walau ji`nā bimitslihī madadā\n\nQul innamā ana basyarum mitslukum yụḥā ilayya annamā ilāhukum ilāhuw wāḥid, fa mang kāna yarjụ liqā`a rabbihī falya\'mal \'amalan ṣāliḥaw wa lā yusyrik bi\'ibādati rabbihī aḥadā',
+                indonesian: 'Katakanlah (Muhammad), “Seandainya lautan menjadi tinta untuk (menulis) kalimat-kalimat Tuhanku, niscaya habis lautan itu sebelum selesai (penulisan) kalimat-kalimat Tuhanku, meskipun Kami datangkan tambahan sebanyak itu (pula).” (QS. Al-Kahfi: 109)\n\nKatakanlah (Muhammad), “Sesungguhnya aku ini hanya seorang manusia seperti kamu, yang diwahyukan kepadaku: “Bahwa sesungguhnya Tuhan kamu itu adalah Tuhan Yang Esa.” Barangsiapa mengharap perjumpaan dengan Tuhannya, maka hendaklah ia mengerjakan amal yang saleh dan janganlah ia mempersekutui seorang pun dalam beribadat kepada Tuhannya.” (QS. Al-Kahfi: 110)'
+            },
+            {
+                id: 'doamakan',
+                title: 'Doa Setelah Makan',
+                arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
+                latin: 'Alhamdu lillahil-ladzi ath‘amanaa wa saqaanaa wa ja‘alanaa muslimiin.',
+                indonesian: 'Segala puji bagi Allah yang telah memberi kami makan dan minum, serta menjadikan kami muslim.'
+            },
+            {
+                id: 'doatidur',
+                title: 'Doa Sebelum Tidur',
+                arabic: 'بِاسْمِكَ اللَّهُمَّ أَحْيَا وَبِاسْمِكَ أَمُوتُ',
+                latin: 'Bismikallahumma ahya wa bismika amuut.',
+                indonesian: 'Dengan menyebut nama-Mu, ya Allah, aku hidup dan dengan menyebut nama-Mu aku mati.'
+            },
+            {
+                id: 'dzikirpagi',
+                title: 'Dzikir Pagi: Subhanallah wa Bihamdih',
+                arabic: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
+                latin: 'Subhanallah wa bihamdih.',
+                indonesian: 'Maha Suci Allah dengan segala puji bagi-Nya. (Dibaca 100x di pagi hari)'
+            },
+            // --- Tambahan Doa Para Nabi dan Rasul ---
+            {
+                id: 'doaNabiAdam',
+                title: 'Doa Nabi Adam (Mohon Ampunan)',
+                arabic: 'رَبَّنَا ظَلَمْنَا أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ',
+                latin: 'Rabbanā ẓalamnā anfusana wa in lam tagfir lanā wa tarḥamnā lanakūnanna minal-khāsirīn',
+                indonesian: 'Ya Tuhan kami, kami telah menzalimi diri kami sendiri. Jika Engkau tidak mengampuni kami dan memberi rahmat kepada kami, niscaya kami termasuk orang-orang yang rugi. (QS. Al-A\'raf: 23)'
+            },
+            {
+                id: 'doaNabiYunus',
+                title: 'Doa Nabi Yunus (Mohon Pertolongan)',
+                arabic: 'لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ',
+                latin: 'Lā ilāha illā anta subḥānaka innī kuntu minaẓ-ẓālimīn',
+                indonesian: 'Tidak ada tuhan selain Engkau. Mahasuci Engkau. Sesungguhnya aku termasuk orang-orang yang zalim. (QS. Al-Anbiya: 87)'
+            },
+            {
+                id: 'doaNabiMusa',
+                title: 'Doa Nabi Musa (Mohon Kemudahan Urusan)',
+                arabic: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي يَفْقَهُوا قَوْلِي',
+                latin: 'Rabbi syraḥ lī ṣadrī wayassir lī amrī waḥlul ‘uqdatam min lisānī yafqahū qawlī',
+                indonesian: 'Ya Tuhanku, lapangkanlah dadaku, dan mudahkanlah untukku urusanku, dan lepaskanlah kekakuan dari lidahku, agar mereka mengerti perkataanku. (QS. Ta-Ha: 25-28)'
+            },
+            {
+                id: 'doaNabiIbrahim',
+                title: 'Doa Nabi Ibrahim (Mohon Keturunan Muslim)',
+                arabic: 'رَبَّنَا وَاجْعَلْنَا مُسْلِمَيْنِ لَكَ وَمِن ذُرِّيَّتِنَا أُمَّةً مُّسْلِمَةً لَّكَ وَأَرِنَا مَنَاسِكَنَا وَتُبْ عَلَيْنَا ۖ إِنَّكَ أَنتَ التَّوَّابُ الرَّحِيمُ',
+                latin: 'Rabbanā waj‘alnā muslimaini laka wa min dhurriyyatinā ummatam muslimatal laka wa arinā manāsikanā wa tub ‘alainā innaka antat-tawwābur-raḥīm',
+                indonesian: 'Ya Tuhan kami, jadikanlah kami berdua orang yang berserah diri kepada-Mu, dan jadikanlah di antara keturunan kami umat yang berserah diri kepada-Mu dan tunjukkanlah kepada kami cara-cara melakukan ibadah haji kami, dan terimalah tobat kami. Sungguh, Engkaulah Yang Maha Penerima tobat, Maha Penyayang. (QS. Al-Baqarah: 128)'
+            },
+            {
+                id: 'doaPerlindunganNabi',
+                title: 'Doa Perlindungan Nabi Muhammad SAW',
+                arabic: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ وَأَعُوذُ بِكَ مِنَ غَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ',
+                latin: 'Allāhumma innī a‘ūdzu bika minal-hammi wal-ḥazani, wa a‘ūdzu bika minal-‘ajzi wal-kasali, wa a‘ūdzu bika minal-jubni wal-bukhli, wa a‘ūdzu bika min ghalabatid-daini wa qahrir-rijāl.',
+                indonesian: 'Ya Allah, sesungguhnya aku berlindung kepada-Mu dari (hal yang menyebabkan) kesedihan dan kesusahan. Aku berlindung kepada-Mu dari kelemahan dan kemalasan. Aku berlindung kepada-Mu dari sifat pengecut dan kikir. Aku berlindung kepada-Mu dari lilitan hutang dan penindasan orang-orang. (HR. Abu Daud)'
+            }
+        ];
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        window.onload = () => {
+            loadThemePreference();
+            loadTasbihState(); // Load tasbih state immediately as it's the MVP view
+        };
+
+        // ============================================
+        // THEME TOGGLE
+        // ============================================
+        function loadThemePreference() {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme === 'light') {
+                isLightMode = true;
+            } else {
+                isLightMode = false; // Default to dark
+            }
+            applyTheme();
+        }
+
+        function toggleTheme() {
+            isLightMode = !isLightMode;
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+            applyTheme();
+        }
+
+        function applyTheme() {
+            if (isLightMode) {
+                document.body.classList.add('light-mode');
+                document.getElementById('themeToggleBtn').textContent = '☀️';
+            } else {
+                document.body.classList.remove('light-mode');
+                document.getElementById('themeToggleBtn').textContent = '🌙';
+            }
+        }
+
+        // ============================================
+        // TASBIH FUNCTIONS
+        // ============================================
+        function loadTasbihState() {
+            console.log('Loading Tasbih state...');
+            google.script.run
+                .withSuccessHandler(state => {
+                    if (state) {
+                        tasbihState = state;
+                        updateTasbihUI();
+                        // Set active quick target button
+                        document.querySelectorAll('.tasbih-ctrl-btn[data-target]').forEach(btn => {
+                            btn.classList.remove('active');
+                            if (parseInt(btn.dataset.target) === tasbihState.target) {
+                                btn.classList.add('active');
+                            }
+                        });
+                        document.getElementById('customTargetInput').value = tasbihState.target;
+                        console.log('Tasbih state loaded successfully:', tasbihState);
+                    } else {
+                        console.error('Failed to load tasbih state: Backend returned null or invalid state.');
+                        alert('Gagal memuat status tasbih. Coba muat ulang halaman.');
+                    }
+                })
+                .withFailureHandler(error => {
+                    console.error('Error loading tasbih state:', error);
+                    alert('Error memuat status tasbih: ' + (error.message || 'Unknown error') + '. Silakan coba muat ulang halaman atau periksa izin Google Apps Script.');
+                })
+                .getTasbihState();
+        }
+
+        function addCount() {
+            if (!isMuted) clickSound.play();
+            google.script.run
+                .withSuccessHandler(state => {
+                    if (state) {
+                        tasbihState = state;
+                        updateTasbihUI();
+                    } else {
+                        console.error("Backend returned null or invalid state for addTasbihCount.");
+                        alert("Gagal memperbarui tasbih (add). Coba lagi.");
+                    }
+                })
+                .withFailureHandler(error => {
+                    console.error('Error adding tasbih count:', error);
+                    alert('Error menambahkan hitungan tasbih: ' + (error.message || 'Unknown error'));
+                })
+                .addTasbihCount();
+        }
+
+        function decreaseCount() {
+            if (!isMuted) clickSound.play();
+            google.script.run
+                .withSuccessHandler(state => {
+                    if (state) {
+                        tasbihState = state;
+                        updateTasbihUI();
+                    } else {
+                        console.error("Backend returned null or invalid state for decreaseTasbihCount.");
+                        alert("Gagal memperbarui tasbih (decrease). Coba lagi.");
+                    }
+                })
+                .withFailureHandler(error => {
+                    console.error('Error decreasing tasbih count:', error);
+                    alert('Error mengurangi hitungan tasbih: ' + (error.message || 'Unknown error'));
+                })
+                .decreaseTasbihCount();
+        }
+
+        function resetCount() {
+            if (confirm('Apakah Anda yakin ingin mengatur ulang hitungan?')) {
+                google.script.run
+                    .withSuccessHandler(state => {
+                        if (state) {
+                            tasbihState = state;
+                            updateTasbihUI();
+                        } else {
+                            console.error("Backend returned null or invalid state for resetTasbihCount.");
+                            alert("Gagal mereset tasbih. Coba lagi.");
+                        }
+                    })
+                    .withFailureHandler(error => {
+                        console.error('Error resetting tasbih count:', error);
+                        alert('Error mereset hitungan tasbih: ' + (error.message || 'Unknown error'));
+                })
+                .resetTasbihCount();
+            }
+        }
+
+        function setQuickTarget(target, element) {
+            document.querySelectorAll('.tasbih-ctrl-btn[data-target]').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('customTargetInput').value = target; // Sync custom input
+            google.script.run
+                .withSuccessHandler(state => {
+                    if (state) {
+                        tasbihState = state;
+                        updateTasbihUI();
+                    } else {
+                        console.error("Backend returned null or invalid state for setTasbihTarget (quick).");
+                        alert("Gagal mengatur target tasbih. Coba lagi.");
+                    }
+                })
+                .withFailureHandler(error => {
+                    console.error('Error setting quick target:', error);
+                    alert('Error mengatur target cepat tasbih: ' + (error.message || 'Unknown error'));
+                })
+                .setTasbihTarget(target);
+        }
+
+        function setCustomTarget(target) {
+            const numTarget = parseInt(target);
+            if (isNaN(numTarget) || numTarget <= 0) {
+                alert('Target harus angka positif.');
+                document.getElementById('customTargetInput').value = tasbihState.target;
+                return;
+            }
+            document.querySelectorAll('.tasbih-ctrl-btn[data-target]').forEach(btn => btn.classList.remove('active')); // Deselect quick target buttons
+            google.script.run
+                .withSuccessHandler(state => {
+                    if (state) {
+                        tasbihState = state;
+                        updateTasbihUI();
+                    } else {
+                        console.error("Backend returned null or invalid state for setTasbihTarget (custom).");
+                        alert("Gagal mengatur target tasbih kustom. Coba lagi.");
+                    }
+                })
+                .withFailureHandler(error => {
+                    console.error('Error setting custom target:', error);
+                    alert('Error mengatur target kustom tasbih: ' + (error.message || 'Unknown error'));
+                })
+                .setTasbihTarget(numTarget);
+        }
+
+        function updateTasbihUI() {
+            document.getElementById('counter').textContent = tasbihState.count;
+            document.getElementById('tasbihTargetDisplay').textContent = tasbihState.target;
+        }
+        
+        function toggleMute() {
+            isMuted = !isMuted;
+            const btn = document.getElementById('muteButton');
+            btn.textContent = isMuted ? '🔊' : '🔇';
+        }
+
+        // ============================================
+        // DOA & DZIKIR FUNCTIONS (Replaced Quran Functions)
+        // ============================================
+        function loadDoaDzikirList() {
+            console.log('Loading Doa & Dzikir list...');
+            const doaDzikirListDiv = document.getElementById('doaDzikirList');
+            if (!doaDzikirListDiv) {
+                console.error('Error: doaDzikirList element not found.');
+                return;
+            }
+            doaDzikirListDiv.innerHTML = ''; // Clear loading or previous content
+
+            if (doaDzikirData.length === 0) {
+                doaDzikirListDiv.innerHTML = '<div class="loading">Tidak ada data Doa & Dzikir.</div>';
+                console.warn('doaDzikirData is empty.');
+                return;
+            }
+
+            const html = doaDzikirData.map(item => `
+                <div class="doa-dzikir-item" onclick="showDoaDzikir('${item.id}')">
+                    <div class="item-title">${item.title}</div>
+                </div>
+            `).join('');
+            doaDzikirListDiv.innerHTML = html;
+
+            // Ensure list is visible and display area is hidden
+            const listCard = doaDzikirListDiv.parentElement; // This is the .card div containing doaDzikirList
+            const displayBox = document.getElementById('doaDzikirDisplay');
+            if (listCard) listCard.classList.remove('hidden'); // Show the list
+            if (displayBox) displayBox.classList.add('hidden'); // Hide the display box
+            console.log('Doa & Dzikir list loaded and displayed.');
+        }
+
+        function showDoaDzikir(itemId) {
+            console.log('Attempting to show Doa & Dzikir item:', itemId);
+            const item = doaDzikirData.find(d => d.id === itemId);
+            if (!item) {
+                alert('Doa/Dzikir tidak ditemukan.');
+                console.error('Error: Doa/Dzikir item not found for ID:', itemId);
+                return;
+            }
+
+            const doaDzikirDisplayDiv = document.getElementById('doaDzikirDisplay');
+            const doaDzikirListCard = document.getElementById('doaDzikirList')?.parentElement; // Optional chaining for safety
+
+            if (doaDzikirListCard) {
+                doaDzikirListCard.classList.add('hidden'); // Hide the list card
+                console.log('Hiding Doa & Dzikir list card.');
+            } else {
+                console.warn('Warning: doaDzikirList parent element not found when trying to hide.');
+            }
+            
+            if (doaDzikirDisplayDiv) {
+                doaDzikirDisplayDiv.classList.remove('hidden'); // Show the display area (it will be display:block by default)
+                console.log('Showing Doa & Dzikir display area.');
+            } else {
+                console.error('Error: doaDzikirDisplay element not found. Cannot show content.');
+                return; // Critical error if the display div itself is missing
+            }
+
+            const contentHtml = `
+                <div class="card">
+                    <div class="verse-header">
+                        <div class="verse-title">${item.title}</div>
+                    </div>
+                    <div class="verse-arabic" dir="rtl">${item.arabic.replace(/\n/g, '<br>')}</div>
+                    <div class="verse-latin">${item.latin.replace(/\n/g, '<br>')}</div>
+                    <div class="verse-trans">${item.indonesian.replace(/\n/g, '<br>')}</div>
+                    <div class="verse-actions">
+                        <button class="verse-btn" onclick="copyDoaDzikir('${item.id}')">&#x2398; Salin Teks</button>
+                        <button class="verse-btn back" onclick="backToDoaDzikirList()">&larr; Kembali</button>
+                    </div>
+                </div>
+            `;
+            doaDzikirDisplayDiv.innerHTML = contentHtml;
+            console.log('Doa & Dzikir item HTML rendered for:', item.title);
+        }
+
+        function backToDoaDzikirList() {
+            console.log('Navigating back to Doa & Dzikir list.');
+            const doaDzikirListCard = document.getElementById('doaDzikirList')?.parentElement;
+            const doaDzikirDisplayDiv = document.getElementById('doaDzikirDisplay');
+
+            if (doaDzikirListCard) {
+                doaDzikirListCard.classList.remove('hidden'); // Show the list card
+                console.log('Showing Doa & Dzikir list card.');
+            } else {
+                console.warn('Warning: doaDzikirList parent element not found on back.');
+            }
+
+            if (doaDzikirDisplayDiv) {
+                doaDzikirDisplayDiv.classList.add('hidden'); // Hide the display area
+                console.log('Hiding Doa & Dzikir display area.');
+            } else {
+                console.warn('Warning: doaDzikirDisplay element not found on back.');
+            }
+        }
+
+        function copyDoaDzikir(itemId) {
+            console.log('Attempting to copy text for item ID:', itemId);
+            const item = doaDzikirData.find(d => d.id === itemId);
+            if (!item) {
+                alert('Tidak ada teks untuk disalin.');
+                console.error('Error: Item not found for copying:', itemId);
+                return;
+            }
+            const textToCopy = `${item.title}\n\n${item.arabic}\n\nTransliterasi Latin:\n${item.latin}\n\nTerjemahan:\n${item.indonesian}`;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert('Teks berhasil disalin!');
+                    console.log('Text copied successfully.');
+                })
+                .catch(err => {
+                    console.error('Gagal menyalin: ', err);
+                    alert('Gagal menyalin teks. Silakan coba lagi.');
+                });
+        }
+
+        // ============================================
+        // IMSAKIYAH FUNCTIONS (Sulawesi Selatan - Makassar)
+        // ============================================
+
+        // Helper function to get current time in Makassar timezone as "HH:MM" string
+        function getCurrentTimeMakassar() {
+            const now = new Date();
+            const options = {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false, // Ensure 24-hour format
+                timeZone: 'Asia/Makassar'
+            };
+            try {
+                return now.toLocaleString('en-US', options); // e.g., "14:30"
+            } catch (e) {
+                console.warn("Error getting Makassar time, falling back to local time. Ensure browser supports 'Asia/Makassar' timezone.", e);
+                // Fallback if 'Asia/Makassar' is not recognized or other issues
+                return now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            }
+        }
+
+        function loadImsakiyah() {
+            console.log('Loading Imsakiyah data...');
+            const today = new Date();
+            const currentMonth = today.getMonth() + 1; // getMonth() is 0-indexed
+            const currentYear = today.getFullYear();
+            const imsakiyahDataDiv = document.getElementById('imsakiyahData');
+            imsakiyahDataDiv.innerHTML = '<div class="loading">Memuat jadwal imsakiyah...</div>';
+
+            google.script.run
+                .withSuccessHandler(data => {
+                    if (data && data.length > 0) {
+                        renderImsakiyahTable(data, today);
+                        console.log('Imsakiyah data loaded successfully.');
+                    } else {
+                        imsakiyahDataDiv.innerHTML = '<div class="loading">Gagal memuat data imsakiyah atau data kosong. Mohon periksa konsol browser atau log Apps Script untuk detail error.</div>';
+                        console.error('getMonthlyPrayerTimes returned no data or null.');
+                    }
+                })
+                .withFailureHandler(error => {
+                    console.error('Error loading imsakiyah data:', error);
+                    imsakiyahDataDiv.innerHTML = `<div class="loading">Error memuat jadwal imsakiyah: ${error.message || 'Unknown error'}. Pastikan koneksi internet Anda stabil dan izin Apps Script sudah benar. Untuk detail, periksa log Apps Script.</div>`;
+                })
+                .getMonthlyPrayerTimes(currentMonth, currentYear);
+
+            document.getElementById('imsakiyahCurrentMonth').textContent = `Jadwal untuk ${today.toLocaleString('id-ID', { month: 'long', year: 'numeric' })}`;
+        }
+
+        function renderImsakiyahTable(data, today) {
+            console.log('Rendering Imsakiyah table...');
+            let tableHtml = `
+                <table class="imsakiyah-table">
+                    <thead>
+                        <tr>
+                            <th>Tgl</th>
+                            <th>Hijri</th>
+                            <th>Imsak</th>
+                            <th>Subuh</th>
+                            <th>Terbit</th>
+                            <th>Dzuhur</th>
+                            <th>Ashar</th>
+                            <th>Maghrib</th>
+                            <th>Isya</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            const todayDay = today.getDate();
+            const todayMonth = today.getMonth(); // 0-indexed
+            const todayYear = today.getFullYear();
+
+            const currentTimeMakassar = getCurrentTimeMakassar(); // Get current time in Makassar
+
+            data.forEach(day => {
+                // Parse date from "DD MMM YYYY" format
+                const dateParts = day.date.split(' '); // e.g., ["01", "Jan", "2024"]
+                const dayOfMonth = parseInt(dateParts[0]);
+                const monthName = dateParts[1];
+                const year = parseInt(dateParts[2]);
+
+                // Create a date object to correctly compare month and year
+                const months = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
+                const dayDate = new Date(year, months[monthName], dayOfMonth);
+                
+                const isToday = (dayDate.getDate() === todayDay && dayDate.getMonth() === todayMonth && dayDate.getFullYear() === todayYear);
+
+                let currentPrayerClass = {
+                    imsak: '', fajr: '', sunrise: '', dhuhr: '', asr: '', maghrib: '', isha: ''
+                };
+
+                if (isToday) {
+                    const prayerTimesForComparison = [
+                        { name: 'imsak', time: day.imsak },
+                        { name: 'fajr', time: day.fajr },
+                        { name: 'sunrise', time: day.sunrise },
+                        { name: 'dhuhr', time: day.dhuhr },
+                        { name: 'asr', time: day.asr },
+                        { name: 'maghrib', time: day.maghrib },
+                        { name: 'isha', time: day.isha }
+                    ].filter(p => p.time && p.time !== '-'); // Filter out empty/invalid times
+
+                    let nextPrayerFound = false;
+                    for (let i = 0; i < prayerTimesForComparison.length; i++) {
+                        if (currentTimeMakassar < prayerTimesForComparison[i].time) {
+                            currentPrayerClass[prayerTimesForComparison[i].name] = 'current-prayer-time';
+                            nextPrayerFound = true;
+                            break;
+                        }
+                    }
+                    // If all prayers for today have passed, highlight Isha (the last one)
+                    if (!nextPrayerFound && prayerTimesForComparison.length > 0) {
+                        currentPrayerClass[prayerTimesForComparison[prayerTimesForComparison.length - 1].name] = 'current-prayer-time';
+                    }
+                }
+                
+                tableHtml += `
+                    <tr${isToday ? ' class="today"' : ''}>
+                        <td>${dayOfMonth}</td>
+                        <td>${day.hijri}</td>
+                        <td class="${currentPrayerClass.imsak}">${day.imsak}</td>
+                        <td class="${currentPrayerClass.fajr}">${day.fajr}</td>
+                        <td class="${currentPrayerClass.sunrise}">${day.sunrise}</td>
+                        <td class="${currentPrayerClass.dhuhr}">${day.dhuhr}</td>
+                        <td class="${currentPrayerClass.asr}">${day.asr}</td>
+                        <td class="${currentPrayerClass.maghrib}">${day.maghrib}</td>
+                        <td class="${currentPrayerClass.isha}">${day.isha}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('imsakiyahData').innerHTML = tableHtml;
+            console.log('Imsakiyah table rendered.');
+        }
+
+        // ============================================
+        // QIBLA FUNCTIONS
+        // ============================================
+        function loadQiblaDirection() {
+            console.log('Loading Qibla direction...');
+            const qiblaResultDiv = document.getElementById('qiblaResult');
+            qiblaResultDiv.innerHTML = '<div class="loading">Mendapatkan lokasi Anda...</div>';
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        console.log(`Geolocation obtained: Lat ${latitude}, Lng ${longitude}.`);
+                        qiblaResultDiv.innerHTML = '<div class="loading">Menghitung arah Kiblat...</div>';
+
+                        google.script.run
+                            .withSuccessHandler(qiblaAngle => {
+                                console.log('Qibla angle received from backend:', qiblaAngle);
+                                qiblaResultDiv.innerHTML = `
+                                    <div class="qibla-direction-display">
+                                        <span class="icon">&#x2197;</span> <!-- Up-right arrow -->
+                                        ${qiblaAngle}°
+                                    </div>
+                                    <p class="qibla-info-text">
+                                        Arah Kiblat adalah **${qiblaAngle} derajat dari Utara Sejati**.
+                                        (Utara Sejati adalah 0°, Timur 90°, Selatan 180°, Barat 270°)
+                                    </p>
+                                    <p class="qibla-info-text">
+                                        Untuk penggunaan praktis, Anda dapat menggunakan kompas fisik. Posisikan kompas Anda sehingga jarum Utara menunjuk ke 0°, lalu putar ke sudut yang ditampilkan.
+                                    </p>
+                                    <p class="qibla-info-text">
+                                        Lintang Anda: ${latitude.toFixed(4)}, Bujur Anda: ${longitude.toFixed(4)}
+                                    </p>
+                                `;
+                            })
+                            .withFailureHandler(error => {
+                                console.error('Error getting Qibla direction from backend:', error);
+                                qiblaResultDiv.innerHTML = `
+                                    <p class="qibla-error-message">Gagal menghitung arah Kiblat: ${error.message || 'Error tidak dikenal'}.</p>
+                                    <p class="qibla-info-text">Pastikan Anda memberikan izin lokasi dan koneksi internet stabil.</p>
+                                `;
+                            })
+                            .getQiblaDirection(latitude, longitude);
+                    },
+                    (error) => {
+                        console.error('Error getting geolocation:', error);
+                        let errorMessage = 'Gagal mendapatkan lokasi Anda.';
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = 'Akses lokasi ditolak. Harap izinkan akses lokasi di pengaturan browser Anda.';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = 'Informasi lokasi tidak tersedia.';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = 'Waktu permintaan lokasi habis.';
+                                break;
+                        }
+                        qiblaResultDiv.innerHTML = `<p class="qibla-error-message">${errorMessage}</p><p class="qibla-info-text">Untuk menghitung Kiblat, kami perlu lokasi Anda.</p>`;
+                    }
+                );
+            } else {
+                qiblaResultDiv.innerHTML = `
+                    <p class="qibla-error-message">Geolocation tidak didukung oleh browser Anda.</p>
+                    <p class="qibla-info-text">Anda mungkin perlu menggunakan browser yang lebih modern atau perangkat lain.</p>
+                `;
+                console.error('Geolocation is not supported by this browser.');
+            }
+        }
+
+
+        // ============================================
+        // VIEW SWITCHING & MOBILE MENU
+        // ============================================
+        function toggleSidebarMenu() {
+            document.body.classList.toggle('menu-open');
+            console.log('Sidebar menu toggled. Menu open:', document.body.classList.contains('menu-open'));
+        }
+
+        function switchView(viewId, element) {
+            console.log('Switching view to:', viewId);
+            // Close sidebar if on mobile
+            if (window.innerWidth <= 768) {
+                toggleSidebarMenu();
+            }
+
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            if (element) {
+                element.classList.add('active');
+            }
+
+            // Hide all views
+            document.querySelectorAll('.view').forEach(view => view.classList.add('hidden'));
+
+            // Show selected view
+            const targetView = document.getElementById('view-' + viewId);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                console.log('View', viewId, 'is now active.');
+            } else {
+                console.error('Error: Target view element not found for ID:', viewId);
+                return;
+            }
+
+            // Specific actions for each view
+            if (viewId === 'doa-dzikir') {
+                loadDoaDzikirList();
+            } else if (viewId === 'imsakiyah') {
+                loadImsakiyah();
+            } else if (viewId === 'tasbih') {
+                loadTasbihState(); // Ensure tasbih state is up-to-date
+            } else if (viewId === 'qibla') {
+                loadQiblaDirection(); // Load Qibla direction when Qibla view is active
+            }
+        }
+    </script>
+</body>
+</html>
